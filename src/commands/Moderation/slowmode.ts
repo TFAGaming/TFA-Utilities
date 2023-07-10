@@ -21,8 +21,8 @@ export default new Command(
                 .setDescription('Get the slowmode of the current channel.')
         )
         .addSubcommand((sub) =>
-            sub.setName('default')
-                .setDescription('Set default current channel\'s slowmode.')
+            sub.setName('disable')
+                .setDescription('Disable current channel\'s slowmode.')
         )
         .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
         .setDMPermission(false),
@@ -70,7 +70,7 @@ export default new Command(
                     break;
                 };
 
-                case 'default': {
+                case 'disable': {
                     await interaction.deferReply();
 
                     await (interaction.channel as TextChannel).setRateLimitPerUser(0);

@@ -65,7 +65,7 @@ export default new Command(
         // This HTTP Client requests for user info, and used on this command to detect if a user has Nitro subscription or not.
         const userData = await axios('https://japi.rest/discord/v1/user/' + user.id);
         const { data } = userData.data;
-
+        
         if (data.public_flags_array) {
             await Promise.all(data.public_flags_array.map(async (badge: string) => {
                 if (badge === 'NITRO') badges.push(emojis['NitroSubscription']);
@@ -86,9 +86,9 @@ export default new Command(
         await interaction.editReply({
             embeds: [
                 new EmbedBuilder()
-                    .setTitle('User Info - ' + user.username)
+                    .setTitle('User Info - ' + user.username + (isBotAndVerified ? ' <:VerifiedBot:1127954811371925545>' : ''))
                     .setThumbnail(user.displayAvatarURL())
-                    .setDescription(`**Username**: ${user.username}\n**Display name**: (in dev)\n**ID**: ${user.id}\n**Nickname**: ${member.nickname ? member.nickname : 'None'}\n**Joined at**: ${time(member.joinedTimestamp, 'D')}\n**Created at**: ${time(user.createdTimestamp, 'D')}\n**Server booster**: ${member.premiumSince ? 'Yes' : 'No'}\n**Bot**: ${user.bot ? `Yes ${isBotAndVerified ? '<:VerifiedBot:1127954811371925545>' : ''}` : 'No'}\n**Badges**: ${badges.join(' ')}\n**Guild owner**: ${user.id === interaction.guild.ownerId ? 'Yes' : 'No'}`)
+                    .setDescription(`**Username**: ${user.username}\n**Display name**: (in dev)\n**ID**: ${user.id}\n**Nickname**: ${member.nickname ? member.nickname : 'None'}\n**Joined at**: ${time(member.joinedTimestamp, 'D')}\n**Created at**: ${time(user.createdTimestamp, 'D')}\n**Server booster**: ${member.premiumSince ? 'Yes' : 'No'}\n**Bot**: ${user.bot ? 'Yes' : 'No'}\n**Badges**: ${badges.join(' ')}\n**Guild owner**: ${user.id === interaction.guild.ownerId ? 'Yes' : 'No'}`)
                     .setFooter({
                         text: `Took ${Math.floor((dateafter - datebefore) / 1000)} seconds to fetch the data.`
                     })

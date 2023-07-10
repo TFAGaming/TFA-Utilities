@@ -61,179 +61,177 @@ export default new Command(
         .setDMPermission(false),
     async (client, interaction, db) => {
 
-        const subcommand = interaction.options.getSubcommand();
-        const subcommandgroup = interaction.options.getSubcommandGroup();
-
         await interaction.deferReply({ ephemeral: true });
 
-        if (subcommand === 'add') {
-            const user = interaction.options.getUser('user', true);
-            const message = interaction.options.getString('message', true);
+        switch (interaction.options.getSubcommand()) {
+            case 'add': {
+                const user = interaction.options.getUser('user', true);
+                const message = interaction.options.getString('message', true);
 
-            const count = await db.note.count({
-                where: {
-                    guildId: interaction.guildId,
-                    authorId: interaction.user.id,
-                    userId: user.id
-                }
-            });
+                const count = await db.note.count({
+                    where: {
+                        guildId: interaction.guildId,
+                        authorId: interaction.user.id,
+                        userId: user.id
+                    }
+                });
 
-            if (count >= 1) {
+                if (count >= 1) {
+                    await interaction.followUp({
+                        embeds: [
+                            embed(`There is a note already added to ${user.toString()}.`, 'error')
+                        ]
+                    });
+
+                    return;
+                };
+
+                await db.note.create({
+                    data: {
+                        guildId: interaction.guildId,
+                        authorId: interaction.user.id,
+                        userId: interaction.user.id,
+                        message: message,
+                        since: BigInt(Date.now())
+                    }
+                });
+
                 await interaction.followUp({
                     embeds: [
-                        embed(`There is a note already added to ${user.toString()}.`, 'error')
+                        embed(`Successfully added a new note to ${user.toString()}.`, 'info')
                     ]
                 });
 
-                return;
+                break;
             };
 
-            await db.note.create({
-                data: {
-                    guildId: interaction.guildId,
-                    authorId: interaction.user.id,
-                    userId: interaction.user.id,
-                    message: message,
-                    since: BigInt(Date.now())
-                }
-            });
+            case 'update': {
+                const user = interaction.options.getUser('user', true);
+                const message = interaction.options.getString('new-message', true);
 
-            await interaction.followUp({
-                embeds: [
-                    embed(`Successfully added a new note to ${user.toString()}.`, 'info')
-                ]
-            });
+                const count = await db.note.count({
+                    where: {
+                        guildId: interaction.guildId,
+                        authorId: interaction.user.id,
+                        userId: user.id
+                    }
+                });
 
-            return;
-        };
+                if (count <= 0) {
+                    await interaction.followUp({
+                        embeds: [
+                            embed(`No note was created for ${user.toString()}.`, 'error')
+                        ]
+                    });
 
-        if (subcommandgroup === 'update') {
-            const user = interaction.options.getUser('user', true);
-            const message = interaction.options.getString('new-message', true);
+                    return;
+                };
 
-            const count = await db.note.count({
-                where: {
-                    guildId: interaction.guildId,
-                    authorId: interaction.user.id,
-                    userId: user.id
-                }
-            });
+                await db.note.updateMany({
+                    where: {
+                        guildId: interaction.guildId,
+                        authorId: interaction.user.id,
+                        userId: user.id
+                    },
+                    data: {
+                        message: message,
+                        edited: true
+                    }
+                });
 
-            if (count <= 0) {
                 await interaction.followUp({
                     embeds: [
-                        embed(`No note was created for ${user.toString()}.`, 'error')
+                        embed(`Successfully edited the note for ${user.toString()}.`, 'info')
                     ]
                 });
 
-                return;
+                break;
             };
 
-            await db.note.updateMany({
-                where: {
-                    guildId: interaction.guildId,
-                    authorId: interaction.user.id,
-                    userId: user.id
-                },
-                data: {
-                    message: message,
-                    edited: true
-                }
-            });
+            case 'view': {
+                const user = interaction.options.getUser('user', true);
 
-            await interaction.followUp({
-                embeds: [
-                    embed(`Successfully edited the note for ${user.toString()}.`, 'info')
-                ]
-            });
+                const count = await db.note.count({
+                    where: {
+                        guildId: interaction.guildId,
+                        authorId: interaction.user.id,
+                        userId: user.id
+                    }
+                });
 
-            return;
-        };
+                if (count <= 0) {
+                    await interaction.followUp({
+                        embeds: [
+                            embed(`No note was created for ${user.toString()}.`, 'error')
+                        ]
+                    });
 
-        if (subcommand === 'view') {
-            const user = interaction.options.getUser('user', true);
+                    return;
+                };
 
-            const count = await db.note.count({
-                where: {
-                    guildId: interaction.guildId,
-                    authorId: interaction.user.id,
-                    userId: user.id
-                }
-            });
+                const data = (await db.note.findMany({
+                    where: {
+                        guildId: interaction.guildId,
+                        authorId: interaction.user.id,
+                        userId: user.id
+                    }
+                }))[0];
 
-            if (count <= 0) {
                 await interaction.followUp({
                     embeds: [
-                        embed(`No note was created for ${user.toString()}.`, 'error')
+                        new EmbedBuilder()
+                            .setAuthor({
+                                name: `Note for ${user.username} ${data.edited ? '(edited)' : ''}`,
+                                iconURL: user.displayAvatarURL()
+                            })
+                            .setDescription(`${time(Number(data.since), 'D')} — ` + data.message)
+                            .setFooter({
+                                text: 'Nobody can see this note, except for you.'
+                            })
+                            .setColor('Blurple')
                     ]
                 });
 
-                return;
+                break;
             };
 
-            const data = (await db.note.findMany({
-                where: {
-                    guildId: interaction.guildId,
-                    authorId: interaction.user.id,
-                    userId: user.id
-                }
-            }))[0];
+            case 'delete': {
+                const user = interaction.options.getUser('user', true);
 
-            await interaction.followUp({
-                embeds: [
-                    new EmbedBuilder()
-                        .setAuthor({
-                            name: `Note for ${user.username} ${data.edited ? '(edited)' : ''}`,
-                            iconURL: user.displayAvatarURL()
-                        })
-                        .setDescription(`${time(Number(data.since), 'D')} — ` + data.message)
-                        .setFooter({
-                            text: 'Nobody can see this note, except for you.'
-                        })
-                        .setColor('Blurple')
-                ]
-            });
-
-            return;
-        };
-
-        if (subcommand === 'delete') {
-            const user = interaction.options.getUser('user', true);
-
-            const count = await db.note.count({
-                where: {
-                    guildId: interaction.guildId,
-                    authorId: interaction.user.id,
-                    userId: user.id
-                }
-            });
-
-            if (count <= 0) {
-                await interaction.followUp({
-                    embeds: [
-                        embed(`No note was created for ${user.toString()}.`, 'error')
-                    ]
+                const count = await db.note.count({
+                    where: {
+                        guildId: interaction.guildId,
+                        authorId: interaction.user.id,
+                        userId: user.id
+                    }
                 });
 
+                if (count <= 0) {
+                    await interaction.followUp({
+                        embeds: [
+                            embed(`No note was created for ${user.toString()}.`, 'error')
+                        ]
+                    });
+
+                    return;
+                };
+
+                await db.note.deleteMany({
+                    where: {
+                        guildId: interaction.guildId,
+                        authorId: interaction.user.id,
+                        userId: user.id
+                    }
+                });
+
+                await interaction.followUp({
+                    embeds: [
+                        embed('Successfully deleted note for ' + user.toString() + '.', 'info')
+                    ]
+                })
+
                 return;
             };
-
-            await db.note.deleteMany({
-                where: {
-                    guildId: interaction.guildId,
-                    authorId: interaction.user.id,
-                    userId: user.id
-                }
-            });
-
-            await interaction.followUp({
-                embeds: [
-                    embed('Successfully deleted note for ' + user.toString() + '.', 'info')
-                ]
-            })
-
-            return;
         };
-
     }
 );

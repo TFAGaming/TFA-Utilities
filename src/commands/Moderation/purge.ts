@@ -52,66 +52,65 @@ export default new Command(
         .setDMPermission(false)
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
     async (client, interaction) => {
-        const subcommandgroup = interaction.options.getSubcommandGroup();
-
         await interaction.deferReply({ ephemeral: true });
 
         try {
-            if (subcommandgroup === 'user') {
-                const user = interaction.options.getUser('user', true);
-                const amount = interaction.options.getNumber('amount', true);
+            switch (interaction.options.getSubcommandGroup()) {
+                case 'user': {
+                    const user = interaction.options.getUser('user', true);
+                    const amount = interaction.options.getNumber('amount', true);
 
-                if (!amount) {
+                    if (!amount) {
+                        await interaction.followUp({
+                            embeds: [
+                                embed('Invalid amount provided.', 'error')
+                            ]
+                        });
+
+                        return;
+                    };
+
+                    const messages = await interaction.channel?.messages.fetch({
+                        limit: amount || 0
+                    });
+
+                    let index = 0;
+                    const filtered: Message<true | false>[] = [];
+
+                    messages?.forEach((msg) => {
+                        if (msg.author.id === user?.id && amount > index) {
+                            filtered.push(msg);
+
+                            index++;
+                        };
+                    });
+
+                    await (interaction.channel as TextChannel)?.bulkDelete(filtered);
+
                     await interaction.followUp({
                         embeds: [
-                            embed('Invalid amount provided.', 'error')
+                            embed(`Successfully deleted **${filtered.length}** messages from ${user.toString()}.`, 'info')
                         ]
                     });
 
-                    return;
+                    break;
                 };
 
-                const messages = await interaction.channel?.messages.fetch({
-                    limit: amount || 0
-                });
+                case 'channel': {
+                    const amount = interaction.options.getNumber('amount', true);
+                    const channel = interaction.options.getChannel('channel') || interaction.channel;
 
-                let index = 0;
-                const filtered: Message<true | false>[] = [];
+                    await (channel as TextChannel).bulkDelete(amount);
 
-                messages?.forEach((msg) => {
-                    if (msg.author.id === user?.id && amount > index) {
-                        filtered.push(msg);
+                    await interaction.followUp({
+                        embeds: [
+                            embed(`Successfully deleted **${amount}** messages in ${channel.toString()}.`, 'info')
+                        ]
+                    });
 
-                        index++;
-                    };
-                });
-
-                await (interaction.channel as TextChannel)?.bulkDelete(filtered);
-
-                await interaction.followUp({
-                    embeds: [
-                        embed(`Successfully deleted **${filtered.length}** messages from ${user.toString()}.`, 'info')
-                    ]
-                });
-
-                return;
+                    break;
+                };
             };
-
-            if (subcommandgroup === 'channel') {
-                const amount = interaction.options.getNumber('amount', true);
-                const channel = interaction.options.getChannel('channel') || interaction.channel;
-
-                await (channel as TextChannel).bulkDelete(amount);
-
-                await interaction.followUp({
-                    embeds: [
-                        embed(`Successfully deleted **${amount}** messages in ${channel.toString()}.`, 'info')
-                    ]
-                });
-
-                return;
-            };
-
         } catch (e) {
             console.error(e);
 

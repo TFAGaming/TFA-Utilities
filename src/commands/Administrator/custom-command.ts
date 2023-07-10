@@ -235,16 +235,6 @@ export default new Command(
                     return;
                 };
 
-                if (client.commands.has(newname)) {
-                    await interaction.followUp({
-                        embeds: [
-                            embed(`This is a default application command name, you can't do that!`, 'error')
-                        ]
-                    });
-
-                    return;
-                };
-
                 await interaction.followUp({
                     embeds: [
                         embed('Updating the command... Please wait!', 'loading', 'This might take up to 3 minutes!')
@@ -296,7 +286,7 @@ export default new Command(
 
                     await interaction.editReply({
                         embeds: [
-                            embed(`The custom command **${name}** (now **${newname}**) has been updated!`, 'info')
+                            embed(`The custom command **${newname || name}** has been updated!`, 'info')
                         ]
                     });
                 } catch {

@@ -65,12 +65,6 @@ export default new Command(
         const keys = [...client.categories.keys()];
         const final: DropdownPaginatorStructureOptionsBuilder[] = [];
 
-        const emojis = {
-            'Moderation': '⚒️',
-            'Utility': '⚙',
-            'Administrator': '⛔'
-        };
-
         keys.forEach((key) => {
             const toAdd: { cat: string, values: string[] } = { cat: key, values: [] };
             const data = client.categories.get(key);
@@ -83,11 +77,10 @@ export default new Command(
 
             final.push({
                 component: {
-                    label: toAdd.cat,
-                    emoji: emojis[toAdd.cat] || undefined
+                    label: toAdd.cat
                 },
                 message: {
-                    content: `${emojis[toAdd.cat]} **${toAdd.cat} commands:**\n\n${toAdd.values.join('\n')}`
+                    content: `**${toAdd.cat} commands:**\n\n${toAdd.values.join('\n')}`
                 }
             });
         });
@@ -102,7 +95,7 @@ export default new Command(
                 content: 'Select a module from the select menu below.\nThis request expires in: ' + time(Date.now() + (60000 * 3), 'R')
             },
             onEnd: {
-                content: 'This paginator has been expired after 1 minute of timeout.'
+                content: 'This paginator has been expired after 3 minutes of timeout.'
             }
         });
     }

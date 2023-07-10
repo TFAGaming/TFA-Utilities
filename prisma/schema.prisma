@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Afk {
+  id      Int     @id @default(autoincrement())
+  userId  String
+  guildId String
+  afk     Boolean @default(false)
+  reason  String  @default("No reason was provided")
+}
+
+model Infraction {
+  id          String  @id
+  guildId     String
+  userId      String
+  moderatorId String
+  reason      String? @default("No reason was provided")
+  type        String  @default("Warn")
+  since       BigInt
+  expires     BigInt?
+}
+
+model AutomodInfraction {
+  id      String  @id
+  guildId String
+  userId  String
+  reason  String? @default("No reason was provided")
+  since   BigInt
+  expires BigInt?
+}
+
+model Note {
+  id       Int      @id @default(autoincrement())
+  guildId  String
+  userId   String
+  authorId String
+  message  String
+  since    BigInt
+  edited   Boolean? @default(false)
+}
+
+model CustomCommand {
+  id          Int    @id @default(autoincrement())
+  guildId     String
+  name        String
+  description String
+  content     String
+}

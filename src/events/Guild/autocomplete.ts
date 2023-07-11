@@ -9,7 +9,7 @@ export default new Event('interactionCreate', async (interaction) => {
     if (!command) return;
     
     try {
-        command.options?.autocomplete ? command.options.autocomplete(client, interaction) : null;
+        if (command.options?.autocomplete) command.options.autocomplete(client, interaction);
     } catch (e) {
         console.error(e);
     };

@@ -1,3 +1,4 @@
+// This file is used for .env typings.
 declare namespace NodeJS {
     export interface ProcessEnv {
         DATABASE_URL: string;

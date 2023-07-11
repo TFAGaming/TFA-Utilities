@@ -1,8 +1,8 @@
 # <samp>T.F.A's Utilities</samp> (Open-source version)
 
-**T.F.A's Utilities** is a powerful Discord moderation bot built for **T.F.A 7524 - Development**. This project uses [Prisma ORM](https://www.prisma.io/) and [discord.js](https://npmjs.com/package/discord.js) v14, and the main database SQLite. You can change the database to another one (examples: MongoDB, PostgreSQL... etc.) but you need to edit the model in `prisma/schema.prisma`.
+**T.F.A's Utilities** is a powerful and advanced Discord moderation bot built for **T.F.A 7524 - Development**. This project uses [Prisma ORM](https://www.prisma.io/) and [discord.js](https://npmjs.com/package/discord.js) v14, and the main database SQLite. You can change the database to another one (examples: MongoDB, PostgreSQL... etc.) but you need to edit the model in `prisma/schema.prisma`.
 
-This bot can be used in multiple servers, but it's recommended to use it in a single server only.
+This bot can be used in multiple servers, but it's recommended to use it in a single server only for better performance (you can enable sharding system).
 
 <img src="https://media.discordapp.net/attachments/1111644651036876822/1128008344033050727/17219288-modified_1.png" width=100> <img src="https://media.discordapp.net/attachments/1111644651036876822/1128008343097716916/telechargement-modified.png" width=100> <img src="https://media.discordapp.net/attachments/1111644651036876822/1128008343772987412/typescript-icon-icon-1024x1024-vh3pfez8-modified.png?width=640&height=640" width=100>
 
@@ -10,7 +10,7 @@ This bot can be used in multiple servers, but it's recommended to use it in a si
 ## Features
 
 ### Administration
-- Custom slash (`/`) commands
+- Custom slash (`/`) commands (5 max)
 
 ### Auto-moderation
 - Anti-swear
@@ -19,7 +19,7 @@ This bot can be used in multiple servers, but it's recommended to use it in a si
 - Anti-mass mention
 - Anti-walls (number of lines per message)
 - Anti-emoji spam (number of emojis per message)
-- Anti-IP addresses (IPv4 or IPv6)
+- Anti-IP addresses (IPv4 or IPv6, to avoid doxxing)
 
 ### Moderation
 - Auto-mod infractions
@@ -39,7 +39,7 @@ This bot can be used in multiple servers, but it's recommended to use it in a si
 
 ### Utility
 - AFK system
-- Help with mentionable commands
+- Help with mentionable commands & autocomplete
 
 ## Setup
 
@@ -75,7 +75,7 @@ CLIENT_TOKEN=""
 # The Discord bot ID
 CLIENT_ID=""
 
-# The developer Discord account ID (You)
+# The developer ID (You)
 OWNER_ID=""
 ```
 
@@ -85,11 +85,8 @@ OWNER_ID=""
 npm run build
 ```
 
-Or:
-```
-npx tsc
-node .
-```
+## Developer
+- [TFAGaming](https://www.github.com/TFAGaming)
 
 ## License
 [GPL-3.0](./LICENSE), General Public License v3.0

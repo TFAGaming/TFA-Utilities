@@ -105,7 +105,8 @@ export default new Command(
                 break;
             };
 
-            case 'update': {
+            // Must be 'message', not 'update'.
+            case 'message': {
                 const user = interaction.options.getUser('user', true);
                 const message = interaction.options.getString('new-message', true);
 

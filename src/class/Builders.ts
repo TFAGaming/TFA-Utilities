@@ -1,15 +1,15 @@
-import { ChatInputCommandInteraction, ClientEvents, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
+import { AutocompleteInteraction, ChatInputCommandInteraction, ClientEvents, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 import ExtendedClient from "./ExtendedClient";
 
 export interface CommandOptions {
     ownerOnly?: boolean,
-    premium?: boolean
+    autocomplete?: (client: ExtendedClient, interaction: AutocompleteInteraction) => void
 };
 
 export class Command {
     readonly structure: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
     readonly run: (client: ExtendedClient, interaction: ChatInputCommandInteraction, db: ExtendedClient['db']) => void;
-    readonly options: CommandOptions;
+    readonly options: CommandOptions | undefined;
 
     constructor(
         structure: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">,

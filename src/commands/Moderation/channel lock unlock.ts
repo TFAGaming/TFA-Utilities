@@ -74,7 +74,7 @@ export default new Command(
                             })
                             .setColor('Yellow')
                     ]
-                })
+                });
 
                 break;
             };
@@ -104,7 +104,7 @@ export default new Command(
                             .addFields({ name: 'Unlock reason', value: reason })
                             .setColor('Green')
                     ]
-                })
+                });
 
                 break;
             };

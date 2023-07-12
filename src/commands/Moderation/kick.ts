@@ -1,6 +1,7 @@
 import { PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { Command } from "../../class/Builders";
-import { embed } from "../../func";
+import { embed, protectedRolesChecker } from "../../func";
+import config from "../../config";
 
 export default new Command(
     new SlashCommandBuilder()
@@ -25,6 +26,20 @@ export default new Command(
         await interaction.deferReply({ ephemeral: true });
 
         try {
+            if (protectedRolesChecker(interaction.guild.members.cache.get(user.id), config.moderation.protectedRoles)) {
+                await interaction.followUp({
+                    embeds: [
+                        embed('That user cannot be punished.', 'error')
+                    ]
+                });
+
+                return;
+            };
+
+            await user?.send({
+                content: `You have been **kicked** from **${interaction.guild.name}**.\nYour punishment reason: ${reason}`
+            }).catch(() => { });
+
             await interaction.guild.members.kick(user, reason);
 
             await db.infraction.create({

@@ -14,12 +14,14 @@ This bot can be used in multiple servers, but it's recommended to use it in a si
 
 ### Auto-moderation
 - Anti-swear
-- Anti-link & Anti-Discord server invites
+- Anti-link
+- Anti-Discord server invites
 - Anti-caps
 - Anti-mass mention
 - Anti-walls (number of lines per message)
 - Anti-emoji spam (number of emojis per message)
-- Anti-IP addresses (IPv4 or IPv6, to avoid doxxing)
+- Anti-IP addresses (avoid any IPv4 or/and IPv6 in any message)
+- Message update anti-bypasser (avoid members to bypass automod by editing their messages)
 
 ### Moderation
 - Auto-mod infractions
@@ -33,13 +35,16 @@ This bot can be used in multiple servers, but it's recommended to use it in a si
         - Ban: Permanent
         - Kick: Permanent
 - Slowmode
-- Lock & Unlock
+- Channel lock & unlock
+- Server lockdown & unlock
 - Yeet (troll command)
 - Note system
+- Protected moderator roles (avoid staff members to punish other staff members)
 
 ### Utility
 - AFK system
-- Help with mentionable commands & autocomplete
+- Server & user info
+- Help with mentionable commands & autocomplete options
 
 ## Setup
 
@@ -64,8 +69,9 @@ npx prisma migrate dev --name init
 npm install @prisma/client aqify.js axios discord.js dotenv ms
 ```
 
-5. Rename `.env.example` to `.env` and fill all required values.
+5. Rename `.env.example` to `.env` and `example.config.ts` (in `src/`) to `config.ts`, and then fill all required values in each file.
 
+**.env**:
 ```apache
 # The database URL ("file:./dev.db" for SQLite)
 DATABASE_URL="file:./dev.db"
@@ -77,6 +83,24 @@ CLIENT_ID=""
 
 # The developer ID (You)
 OWNER_ID=""
+```
+
+**config.ts**:
+```ts
+export default {
+    lockdown: {
+        // The channel IDs to update whenever the server is on lockdown.
+        channels: string[]
+    },
+    moderation: {
+        // The role IDs to protect other staff members whenever a staff tries to ban them.
+        protectedRoles: string[]
+    },
+    automod: {
+        // The role IDs to ignore people (have at least one of the roles) who breaks the automod rules.
+        protectedRoles: string[]
+    }
+};
 ```
 
 6. Run the following command to compile the TypeScript files into JavaScript files, and then starts from the main file `lib/index.js`.

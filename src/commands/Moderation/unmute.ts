@@ -31,6 +31,10 @@ export default new Command(
 
             await member.timeout(0);
 
+            await member.user?.send({
+                content: `You have been **unmuted** from **${interaction.guild.name}**, you can start to chat again.`
+            }).catch(() => { });
+
             await interaction.followUp({
                 embeds: [
                     embed('Successfully unmuted ' + member.user.toString() + '!', 'info')

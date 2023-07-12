@@ -1,6 +1,7 @@
 import { ChannelType, Message, PermissionFlagsBits, SlashCommandBuilder, TextChannel } from "discord.js";
 import { Command } from "../../class/Builders";
-import { embed } from "../../func";
+import { embed, protectedRolesChecker } from "../../func";
+import config from "../../config";
 
 export default new Command(
     new SlashCommandBuilder()
@@ -59,6 +60,16 @@ export default new Command(
                 case 'user': {
                     const user = interaction.options.getUser('user', true);
                     const amount = interaction.options.getNumber('amount', true);
+
+                    if (protectedRolesChecker(interaction.guild.members.cache.get(user.id), config.moderation.protectedRoles)) {
+                        await interaction.followUp({
+                            embeds: [
+                                embed('You cannot delete that user\'s messages.', 'error')
+                            ]
+                        });
+        
+                        return;
+                    };
 
                     if (!amount) {
                         await interaction.followUp({

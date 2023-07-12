@@ -3,5 +3,6 @@ dist
 
 package-lock.json
 .env
+src/config.ts
 prisma/migrations
 prisma/dev.db

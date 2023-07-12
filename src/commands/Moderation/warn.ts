@@ -1,7 +1,8 @@
 import { PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { Command } from "../../class/Builders";
 import ms from 'ms';
-import { embed } from "../../func";
+import { embed, protectedRolesChecker } from "../../func";
+import config from "../../config";
 
 export default new Command(
     new SlashCommandBuilder()
@@ -30,6 +31,20 @@ export default new Command(
         const duration = interaction.options.getBoolean('permanent') ? null : (BigInt(Date.now() + ms('7d')));
 
         await interaction.deferReply({ ephemeral: true });
+
+        if (protectedRolesChecker(interaction.guild.members.cache.get(user.id), config.moderation.protectedRoles)) {
+            await interaction.followUp({
+                embeds: [
+                    embed('That user cannot be punished.', 'error')
+                ]
+            });
+
+            return;
+        };
+
+        await user?.send({
+            content: `You have been **warned** in **${interaction.guild.name}**.\nYour punishment reason: ${reason}`
+        }).catch(() => { });
 
         await db.infraction.create({
             data: {

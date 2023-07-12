@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, GuildMember } from "discord.js";
 import { client } from "..";
 
 export const embed = (message: string, type?: 'error' | 'info' | 'warn' | 'loading' | 'none', footer?: string) => {
@@ -92,27 +92,6 @@ export const automodInfractionRemover = () => {
     });
 };
 
-// Original source: StackOverflow
-export const nFormatter = (num: number, precision: number = 1) => {
-    const map = [
-        { suffix: 'T', threshold: 1e12 },
-        { suffix: 'B', threshold: 1e9 },
-        { suffix: 'M', threshold: 1e6 },
-        { suffix: 'k', threshold: 1e3 },
-        { suffix: '', threshold: 1 },
-    ];
-
-    const found = map.find((x) => Math.abs(num) >= x.threshold);
-
-    if (found) {
-        const formatted = (num / found.threshold).toFixed(precision) + found.suffix;
-
-        return formatted;
-    };
-
-    return num;
-};
-
 export const checkCC = async (interaction: ChatInputCommandInteraction): Promise<void> => {
     const data = (await client.db.customCommand.findMany({
         where: {
@@ -128,4 +107,20 @@ export const checkCC = async (interaction: ChatInputCommandInteraction): Promise
     });
 
     return;
+};
+
+export const protectedRolesChecker = (member: GuildMember, roles: string[]): boolean => {
+    if (!member) return false;
+    if (roles.length <= 0) return false;
+
+    let check = false;
+
+    for (const role of roles) {
+        if (member.roles.cache.has(role)) {
+            check = true;
+            break;
+        };
+    };
+
+    return check;
 };

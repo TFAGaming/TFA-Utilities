@@ -19,8 +19,10 @@ export default new Command(
         const user = interaction.options.getUser('user') || interaction.user;
         const member = interaction.guild.members.cache.get(user.id);
 
+        await interaction.deferReply();
+
         if (!member) {
-            await interaction.reply({
+            await interaction.followUp({
                 embeds: [
                     embed('That user is not on the server.', 'error')
                 ]
@@ -29,18 +31,8 @@ export default new Command(
             return;
         };
 
-        const datebefore = Date.now();
-
-        await interaction.reply({
-            embeds: [
-                embed('Please wait...', 'loading')
-            ]
-        });
-
         /*
         You can change the emojis if you want by replacing the current emoji string to another custom emoji string.
-        Note 1: that your bot requires "EXTRERNAL_EMOJIS" perms to use them in multiple servers.
-        Note 2: If you want to make all of them empty, turn the object into empty object: { }
         */
         const emojis = {
             Partner: '<:DiscordPartner:1108509450052063272>',
@@ -57,6 +49,7 @@ export default new Command(
             VerifiedDeveloper: '<:EarlyVerifiedDiscordBotDev:1108509539269087253>',
             NitroSubscription: '<:NitroSubscription:1108509587704926319>',
             SlashCommandsSupport: '<:SupportsCommands:1125396330764841011>',
+            OriginallyKnownAs: '<:OriginallyKnownAs:1128995669726740510>'
         };
 
         let isBotAndVerified = false;
@@ -79,19 +72,15 @@ export default new Command(
             if (badge in emojis) badges.push(emojis[badge]);
         });
 
-        if (user.bot) badges.push(emojis['SlashCommandsSupport'])
+        if (user.bot) badges.push(emojis['SlashCommandsSupport']);
+        if (user.discriminator === '0') badges.push(emojis['OriginallyKnownAs']);
 
-        const dateafter = Date.now();
-
-        await interaction.editReply({
+        await interaction.followUp({
             embeds: [
                 new EmbedBuilder()
                     .setTitle('User Info - ' + user.username + (isBotAndVerified ? ' <:VerifiedBot:1127954811371925545>' : ''))
                     .setThumbnail(user.displayAvatarURL())
                     .setDescription(`**Username**: ${user.username}\n**Display name**: (in dev)\n**ID**: ${user.id}\n**Nickname**: ${member.nickname ? member.nickname : 'None'}\n**Joined at**: ${time(member.joinedTimestamp, 'D')}\n**Created at**: ${time(user.createdTimestamp, 'D')}\n**Server booster**: ${member.premiumSince ? 'Yes' : 'No'}\n**Bot**: ${user.bot ? 'Yes' : 'No'}\n**Badges**: ${badges.join(' ')}\n**Guild owner**: ${user.id === interaction.guild.ownerId ? 'Yes' : 'No'}`)
-                    .setFooter({
-                        text: `Took ${Math.floor((dateafter - datebefore) / 1000)} seconds to fetch the data.`
-                    })
                     .setColor('Blurple')
             ]
         });

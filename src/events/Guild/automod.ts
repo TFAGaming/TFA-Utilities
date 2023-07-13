@@ -115,7 +115,7 @@ export const _mainAutomodFunction = (message: Message) => {
     const textCaps = (caps / message.content.length) * 100;
 
     if (message.content.length > 15 && textCaps > 60) {
-        flag_message('you are using too much caps (' + textCaps + '%)', '[AutoMod] Using too much capitalized letters');
+        flag_message('you are using too much caps (' + textCaps.toFixed(2) + '%)', '[AutoMod] Using too much capitalized letters');
 
         return;
     };

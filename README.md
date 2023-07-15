@@ -2,7 +2,7 @@
 
 **T.F.A's Utilities** is a powerful and advanced Discord moderation bot built for **T.F.A 7524 - Development**. This project uses [Prisma ORM](https://www.prisma.io/) and [discord.js](https://npmjs.com/package/discord.js) v14, and the main database SQLite. You can change the database to another one (examples: MongoDB, PostgreSQL... etc.) but you need to edit the model in `prisma/schema.prisma`.
 
-> **Warning** This bot is made for a single-server only. If you make your bot public, you need a huge database and some other configuration for the commands. I recommend you to use this project for your server only, and not multi-guild bot.
+> **Warning** This bot is made for a single-server only. If you make your bot public, you need a huge database and some other configuration for the commands. This bot is **NOT** made for public servers.
 
 <img src="https://media.discordapp.net/attachments/1111644651036876822/1128008344033050727/17219288-modified_1.png" width=100> <img src="https://media.discordapp.net/attachments/1111644651036876822/1128008343097716916/telechargement-modified.png" width=100> <img src="https://media.discordapp.net/attachments/1111644651036876822/1128008343772987412/typescript-icon-icon-1024x1024-vh3pfez8-modified.png?width=640&height=640" width=100>
 
@@ -25,7 +25,10 @@
 
 ### Moderation
 - Auto-mod infractions
-- Expiration time
+- Infractions
+    - Automod
+        - 3x warnings: 3h timeout 
+- Infractions expiration time
     - Automod
         - Warning: 6h
         - Mute: Permanent
@@ -43,6 +46,7 @@
 
 ### Utility
 - AFK system
+- Welcome system & autorole
 - Server & user info
 - Help with mentionable commands & autocomplete options
 
@@ -99,6 +103,22 @@ export default {
     automod: {
         // The role IDs to ignore people (have at least one of the roles) who breaks the automod rules.
         protectedRoles: string[]
+    },
+    welcome: {
+        channelId: string, // The welcome/leave channel ID.
+        joinMessage: (member: GuildMember) => { // The join message.
+            return {
+                content: string,
+                embeds: EmbedBuilder[]
+            }
+        },
+        leftMessage: (member: GuildMember) => { // The left message.
+            return {
+                content: string,
+                embeds: EmbedBuilder[]
+            }
+        },
+        roles: string[] // The roles IDs to add to the joined new members.
     }
 };
 ```

@@ -57,9 +57,9 @@
 npm init -y
 ```
 
-2. Install **tsc**, **prisma**, and **@types/ms** as dev dependencies:
+2. Install **typescript**, **prisma**, and **@types/ms** as dev dependencies:
 ```
-npm install --save-dev tsc prisma @types/ms
+npm install --save-dev typescript prisma @types/ms
 ```
 
 3. Run a migration to create your database tables with prisma: ([Learn more here](https://www.prisma.io/docs/getting-started/quickstart))
@@ -103,22 +103,6 @@ export default {
     automod: {
         // The role IDs to ignore people (have at least one of the roles) who breaks the automod rules.
         protectedRoles: string[]
-    },
-    welcome: {
-        channelId: string, // The welcome/leave channel ID.
-        joinMessage: (member: GuildMember) => { // The join message.
-            return {
-                content: string,
-                embeds: EmbedBuilder[]
-            }
-        },
-        leftMessage: (member: GuildMember) => { // The left message.
-            return {
-                content: string,
-                embeds: EmbedBuilder[]
-            }
-        },
-        roles: string[] // The roles IDs to add to the joined new members.
     }
 };
 ```
@@ -129,7 +113,7 @@ export default {
 npm run build
 ```
 
-## Developer
+## Developers
 - [TFAGaming](https://www.github.com/TFAGaming)
 
 ## License

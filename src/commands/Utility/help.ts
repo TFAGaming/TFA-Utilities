@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionChoiceData, EmbedBuilder, PermissionsBitField, SlashCommandBuilder } from "discord.js";
+import { ApplicationCommandOptionChoiceData, EmbedBuilder, PermissionsBitField, SlashCommandBuilder, StringSelectMenuBuilder } from "discord.js";
 import { Command } from "../../class/Builders";
 import { DropdownPaginatorBuilder, DropdownPaginatorStructureOptionsBuilder, SendMethod, time } from "aqify.js";
 import { embed } from "../../func";
@@ -88,8 +88,6 @@ export default new Command(
             });
 
             const paginator = new DropdownPaginatorBuilder(interaction, {
-                customId: interaction.id,
-                placeHolder: 'Select a module',
                 time: (60000 * 3)
             });
 
@@ -118,17 +116,21 @@ export default new Command(
 
             paginator.addOptions(final);
 
-            await paginator.send(SendMethod.FollowUp, {
-                onNotAuthor: async (i) => {
-                    await i.reply({ content: 'You are not the author of this interaction.' });
-                },
-                home: {
-                    content: 'Select a module from the select menu below.\nThis request expires in: ' + time(Date.now() + (60000 * 3), 'R')
-                },
-                onEnd: {
-                    content: 'This paginator has been expired after 3 minutes of timeout.'
-                }
-            });
+            await paginator.send(SendMethod.FollowUp,
+                new StringSelectMenuBuilder()
+                    .setCustomId('help_menu_' + interaction.id)
+                    .setPlaceholder('Select a module'),
+                {
+                    onNotAuthor: async (i) => {
+                        await i.reply({ content: 'You are not the author of this interaction.' });
+                    },
+                    home: {
+                        content: 'Select a module from the select menu below.\nThis request expires in: ' + time(Date.now() + (60000 * 3), 'R')
+                    },
+                    onEnd: {
+                        content: 'This paginator has been expired after 3 minutes of timeout.'
+                    }
+                });
         };
     },
     {

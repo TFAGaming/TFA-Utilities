@@ -80,7 +80,7 @@ export default new Command(
                 new EmbedBuilder()
                     .setTitle('User Info - ' + user.username + (isBotAndVerified ? ' <:VerifiedBot:1127954811371925545>' : ''))
                     .setThumbnail(user.displayAvatarURL())
-                    .setDescription(`**Username**: ${user.username}\n**Display name**: (in dev)\n**ID**: ${user.id}\n**Nickname**: ${member.nickname ? member.nickname : 'None'}\n**Joined at**: ${time(member.joinedTimestamp, 'D')}\n**Created at**: ${time(user.createdTimestamp, 'D')}\n**Server booster**: ${member.premiumSince ? 'Yes' : 'No'}\n**Bot**: ${user.bot ? 'Yes' : 'No'}\n**Badges**: ${badges.join(' ')}\n**Guild owner**: ${user.id === interaction.guild.ownerId ? 'Yes' : 'No'}`)
+                    .setDescription(`**Username**: ${user.username}\n**Display name**: ${user.displayName}\n**ID**: ${user.id}\n**Nickname**: ${member.nickname ? member.nickname : 'None'}\n**Joined at**: ${time(member.joinedTimestamp, 'D')}\n**Created at**: ${time(user.createdTimestamp, 'D')}\n**Server booster**: ${member.premiumSince ? 'Yes' : 'No'}\n**Bot**: ${user.bot ? 'Yes' : 'No'}\n**Badges**: ${badges.join(' ')}\n**Guild owner**: ${user.id === interaction.guild.ownerId ? 'Yes' : 'No'}`)
                     .setColor('Blurple')
             ]
         });
